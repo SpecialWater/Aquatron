@@ -1,0 +1,8 @@
+*.exe
+*.list
+*.gpg
+.env
+/config
+venv/
+*.pyc
+*.pptx
