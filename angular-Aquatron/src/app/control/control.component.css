@@ -1,0 +1,22 @@
+.container {
+  max-width: 1500px;
+}
+
+.attribute {
+  width: 125px;
+}
+
+.timersTitle {
+  width: 100px;
+}
+
+.mat-button-toggle {
+  width: 100px;
+  height: 50px;
+  max-height: 50px;
+}
+
+.mat-button-toggle-group {
+  height: 50px;
+  max-height: 50px;
+}

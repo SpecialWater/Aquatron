@@ -1,73 +1,62 @@
 from app.config import Config
 from app import app
-import sqlalchemy 
-import pandas as pd
-from passlib.hash import sha256_crypt
-
 from flask import Flask, jsonify, request
 from flask_cors import cross_origin
-from flask_jwt_extended import (
-    JWTManager, jwt_required, create_access_token,
-    get_jwt_identity
-)
-
-jwt = JWTManager(app)
+from app.database import Client
+from app.utility import getID, getPartition
+from copy import deepcopy
 
 
-engine = sqlalchemy.create_engine("mssql+pyodbc:///?odbc_connect={}".format(Config.connString))
+AquaState = Client('State').getContainer()
+AquaSettings = Client('Settings').getContainer()
+AquaMaster = Client('Master').getContainer()
 
-@app.route('/', methods=['GET'])
-@jwt_required
+@app.route('/')
+@app.route('/index')
+def index():
+    return 'hello world'
+
+
+@app.route('/state/post', methods=['POST'])
 @cross_origin()
-def getExcelData():
-    response = pd.read_sql("SELECT * FROM AndrewTable",
-                            con=engine)
-    response = response.to_json(orient="records")
-    return response
-
-# Provide a method to create access tokens. The create_access_token()
-# function is used to actually generate the token, and you can return
-# it to the caller however you choose.
-@app.route('/login', methods=['POST', 'OPTIONS'])
-@cross_origin()
-def login():
+def postState():
     if not request.is_json:
         return jsonify({"msg": "Missing JSON in request"}), 400
+    
+    id = getID()
+    partition = getPartition()
+    request.json['id'] = id
+    request.json['reportDate'] = partition
+    AquaState.create_item(request.json)
 
     print(request.json)
-    
-    # Get username / password from request
-    username = request.json.get('email', None)
-    password = request.json.get('password', None)
-    username = username.lower()
-    
-    print(username)
-    print(password)
-    
-    if not username:
-        return jsonify({"msg": "Missing username parameter"}), 400
-    if not password:
-        return jsonify({"msg": "Missing password parameter"}), 400
-    
-    # Pull all usernames / hash from hastable
-    # Lazy but avoids possible sql injection and table will always be small
-    userPass = pd.read_sql("SELECT * FROM AndrewTableTwo",
-                            con=engine)
-    UserPass = userPass[userPass['UserName'].str.contains(username)]
-    UserPass = UserPass.reset_index(drop=True)
-    
-    # Get User / Hash value and verify
-    if(len(UserPass.index) == 1):
-        secretUser = UserPass["UserName"][0]
-        secretHash = UserPass["HashValue"][0]
-        verifyPass = sha256_crypt.verify(password, secretHash)
-    else:
-        return jsonify({"msg": "Bad username or password"}), 401
+    return request.json
 
+@app.route('/settings/post', methods=['POST'])
+@cross_origin()
+def postSettings():
+    if not request.is_json:
+        return jsonify({"msg": "Missing JSON in request"}), 400
     
-    if verifyPass == False:
-        return jsonify({"msg": "Bad username or password"}), 401
+    settings = deepcopy(request.json)    
+    id = getID()
+    partition = getPartition()
+    settings['id'] = id
+    settings['reportDate'] = partition
+    
+    master = deepcopy(request.json)
+    master['device'] = 'AndrewPi'
+    master['id'] = 'master'
+    
+    AquaSettings.create_item(settings)
+    AquaMaster.upsert_item(master)
+    
+    return request.json
 
-    # Identity can be any data that is json serializable
-    access_token = create_access_token(identity=username)
-    return jsonify(access_token=access_token), 200
+@app.route('/settings/get', methods=['GET'])
+@cross_origin()
+def getSettings():
+
+    currentSettings = AquaMaster.read_item("master", partition_key="AndrewPi")
+    return currentSettings
+

@@ -1,0 +1,130 @@
+
+<div fxLayout="column" fxLayoutGap="30px" class="container">
+
+  <div fxLayout="row wrap" fxLayoutGap="20px">
+    <div fxFlexAlign="center" class="attribute">
+    <b>UV Light</b>
+    </div>
+
+    <mat-button-toggle-group
+    [(ngModel)]=lightUVOn
+    fxFlexAlign="center">
+      <mat-button-toggle [value]="true"> Enabled </mat-button-toggle>
+      <mat-button-toggle [value]="false"> Disabled </mat-button-toggle>
+    </mat-button-toggle-group>
+
+    <div *ngIf="lightUVOn" fxLayout="column">
+      <div fxLayout="row">
+        <div fxFlexAlign="center" class="timersTitle">
+        Start Time:
+        </div>
+        <div>
+            <ngx-timepicker-field [(ngModel)]=lightUVStartTime [format]="12" [controlOnly]="true"></ngx-timepicker-field>
+        </div>
+      </div>
+      <div fxLayout="row">
+        <div fxFlexAlign="center" class="timersTitle">
+        Duration:
+        </div>
+        <div>
+            <ngx-timepicker-field [(ngModel)]=lightUVDuration [format]="24" [controlOnly]="true"></ngx-timepicker-field>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div fxLayout="row wrap" fxLayoutGap="20px">
+    <div fxFlexAlign="center" class="attribute">
+    <b>Refugium Light</b>
+    </div>
+
+    <mat-button-toggle-group
+    [(ngModel)]=lightRefugiumOn
+    fxFlexAlign="center">
+      <mat-button-toggle [value]="true"> Enabled </mat-button-toggle>
+      <mat-button-toggle [value]="false"> Disabled </mat-button-toggle>
+    </mat-button-toggle-group>
+
+    <div *ngIf="lightRefugiumOn" fxLayout="column">
+      <div fxLayout="row">
+        <div fxFlexAlign="center" class="timersTitle">
+        Start Time:
+        </div>
+        <div>
+            <ngx-timepicker-field [(ngModel)]=lightRefugiumStartTime [format]="12" [controlOnly]="true"></ngx-timepicker-field>
+        </div>
+      </div>
+      <div fxLayout="row">
+        <div fxFlexAlign="center" class="timersTitle">
+        Duration:
+        </div>
+        <div>
+            <ngx-timepicker-field [(ngModel)]=lightRefugiumDuration [format]="24" [controlOnly]="true"></ngx-timepicker-field>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div fxLayout="row wrap" fxLayoutGap="20px">
+    <div fxFlexAlign="center" class="attribute">
+    <b>Gas Injection</b>
+    </div>
+
+    <mat-button-toggle-group
+    [(ngModel)]=gasInjectionOn
+    fxFlexAlign="center">
+      <mat-button-toggle [value]="true"> Enabled </mat-button-toggle>
+      <mat-button-toggle [value]="false"> Disabled </mat-button-toggle>
+    </mat-button-toggle-group>
+
+    <div *ngIf="gasInjectionOn" fxLayout="column">
+      <div fxLayout="row">
+        <div fxFlexAlign="center" class="timersTitle">
+        Start Time:
+        </div>
+        <div>
+            <ngx-timepicker-field [(ngModel)]=gasInjectionStartTime [format]="12" [controlOnly]="true"></ngx-timepicker-field>
+        </div>
+      </div>
+      <div fxLayout="row">
+        <div fxFlexAlign="center" class="timersTitle">
+        Duration:
+        </div>
+        <div>
+            <ngx-timepicker-field [(ngModel)]=gasInjectionDuration [format]="24" [controlOnly]="true"></ngx-timepicker-field>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div fxLayout="row wrap" fxLayoutGap="20px">
+    <div fxFlexAlign="center" class="attribute">
+    <b>Heater</b>
+    </div>
+
+    <mat-button-toggle-group
+    [(ngModel)]=heaterOn
+    fxFlexAlign="center">
+      <mat-button-toggle [value]="true"> Enabled </mat-button-toggle>
+      <mat-button-toggle [value]="false"> Disabled </mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+
+
+  <div fxLayout="row wrap" fxLayoutGap="20px">
+    <div fxFlexAlign="center" class="attribute">
+    <b>Pump</b>
+    </div>
+
+    <mat-button-toggle-group
+    [(ngModel)]=pumpOn
+    fxFlexAlign="center">
+      <mat-button-toggle [value]="true"> Enabled </mat-button-toggle>
+      <mat-button-toggle [value]="false"> Disabled </mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+
+</div>

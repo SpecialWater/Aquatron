@@ -1,0 +1,47 @@
+
+{"State"}
+{
+	"id": "yyyymmddhhmmss",
+	"reportDate (partition)" : "mm/dd/yyyy",
+	"Temperature": 77.5,
+	"pH": 6.8
+	"Light_UV_On": true,	
+	"Light_Refugium_On": true,
+	"GasInjection_On": false,
+	"Heater_On": true,
+	"Pump_Power": 3
+}
+
+
+{"Settings"}
+{
+	"id": "yyyymmddhhmmss",
+	"reportDate (partition)" : "mm/dd/yyyy",
+	"Light_UV": {
+		"Enabled": true,
+		"TimeOn": "hh:mm:ss",
+		"Timer": 12
+	},
+	"Light_Refugium": {
+		"Enabled": true,
+		"TimeOn": "hh:mm:ss",
+		"Timer": 12
+	},
+	"Heater": {
+		"Enabled": true,
+		"MinTemp": 76,
+		"MaxTemp": 77
+	},
+	"GasInjection": {
+		"Enabled": false,
+		"TimeOn": "hh:mm:ss",
+		"Timer": 12
+	},
+	"Pump": {
+		"Enabled": true,
+		"Power": 3,
+		"FeedMode": false
+		"FeedDuration": 30
+		"FeedTimeOn": "hh:mm:ss",
+	}
+}
