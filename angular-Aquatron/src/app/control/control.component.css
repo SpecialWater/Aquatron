@@ -1,13 +1,21 @@
-.container {
-  max-width: 1500px;
-}
-
 .attribute {
   width: 125px;
 }
 
 .timersTitle {
   width: 100px;
+}
+
+.heaterTemp {
+  width: 85px;
+}
+
+.options {
+  min-width:350px;
+}
+
+.saveButton {
+  min-width: 125px;
 }
 
 .mat-button-toggle {
