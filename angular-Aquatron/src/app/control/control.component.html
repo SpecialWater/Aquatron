@@ -1,5 +1,5 @@
 
-<div fxLayout="column" fxLayoutGap="30px" class="container">
+<div fxLayout="column" fxLayoutGap="30px">
 
   <div fxLayout="row wrap" fxLayoutGap="20px">
     <div fxFlexAlign="center" class="attribute">
@@ -13,13 +13,15 @@
       <mat-button-toggle [value]="false"> Disabled </mat-button-toggle>
     </mat-button-toggle-group>
 
-    <div *ngIf="lightUVOn" fxLayout="column">
+    <div *ngIf="lightUVOn" fxLayout="column" class="options">
       <div fxLayout="row">
         <div fxFlexAlign="center" class="timersTitle">
         Start Time:
         </div>
         <div>
-            <ngx-timepicker-field [(ngModel)]=lightUVStartTime [format]="12" [controlOnly]="true"></ngx-timepicker-field>
+            <ngx-timepicker-field [(ngModel)]=lightUVStartTime [format]="12"
+            [controlOnly]="true" [defaultTime]=lightUVStartTime>
+          </ngx-timepicker-field>
         </div>
       </div>
       <div fxLayout="row">
@@ -27,7 +29,9 @@
         Duration:
         </div>
         <div>
-            <ngx-timepicker-field [(ngModel)]=lightUVDuration [format]="24" [controlOnly]="true"></ngx-timepicker-field>
+            <ngx-timepicker-field [(ngModel)]=lightUVDuration [format]="24"
+            [controlOnly]="true" [defaultTime]=lightUVDuration>
+          </ngx-timepicker-field>
         </div>
       </div>
     </div>
@@ -46,13 +50,15 @@
       <mat-button-toggle [value]="false"> Disabled </mat-button-toggle>
     </mat-button-toggle-group>
 
-    <div *ngIf="lightRefugiumOn" fxLayout="column">
+    <div *ngIf="lightRefugiumOn" fxLayout="column" class="options">
       <div fxLayout="row">
         <div fxFlexAlign="center" class="timersTitle">
         Start Time:
         </div>
         <div>
-            <ngx-timepicker-field [(ngModel)]=lightRefugiumStartTime [format]="12" [controlOnly]="true"></ngx-timepicker-field>
+            <ngx-timepicker-field [(ngModel)]=lightRefugiumStartTime [format]="12"
+            [controlOnly]="true" [defaultTime]=lightRefugiumStartTime>
+          </ngx-timepicker-field>
         </div>
       </div>
       <div fxLayout="row">
@@ -60,7 +66,9 @@
         Duration:
         </div>
         <div>
-            <ngx-timepicker-field [(ngModel)]=lightRefugiumDuration [format]="24" [controlOnly]="true"></ngx-timepicker-field>
+            <ngx-timepicker-field [(ngModel)]=lightRefugiumDuration [format]="24"
+            [controlOnly]="true" [defaultTime]=lightRefugiumDuration>
+          </ngx-timepicker-field>
         </div>
       </div>
     </div>
@@ -79,13 +87,15 @@
       <mat-button-toggle [value]="false"> Disabled </mat-button-toggle>
     </mat-button-toggle-group>
 
-    <div *ngIf="gasInjectionOn" fxLayout="column">
+    <div *ngIf="gasInjectionOn" fxLayout="column" class="options">
       <div fxLayout="row">
         <div fxFlexAlign="center" class="timersTitle">
         Start Time:
         </div>
         <div>
-            <ngx-timepicker-field [(ngModel)]=gasInjectionStartTime [format]="12" [controlOnly]="true"></ngx-timepicker-field>
+            <ngx-timepicker-field [(ngModel)]=gasInjectionStartTime [format]="12"
+            [controlOnly]="true" [defaultTime]=gasInjectionStartTime>
+          </ngx-timepicker-field>
         </div>
       </div>
       <div fxLayout="row">
@@ -93,7 +103,9 @@
         Duration:
         </div>
         <div>
-            <ngx-timepicker-field [(ngModel)]=gasInjectionDuration [format]="24" [controlOnly]="true"></ngx-timepicker-field>
+            <ngx-timepicker-field [(ngModel)]=gasInjectionDuration [format]="24"
+            [controlOnly]="true" [defaultTime]=gasInjectionDuration>
+          </ngx-timepicker-field>
         </div>
       </div>
     </div>
@@ -102,7 +114,7 @@
 
   <div fxLayout="row wrap" fxLayoutGap="20px">
     <div fxFlexAlign="center" class="attribute">
-    <b>Heater</b>
+      <b>Heater</b>
     </div>
 
     <mat-button-toggle-group
@@ -111,6 +123,17 @@
       <mat-button-toggle [value]="true"> Enabled </mat-button-toggle>
       <mat-button-toggle [value]="false"> Disabled </mat-button-toggle>
     </mat-button-toggle-group>
+
+
+    <div fxLayout="row" *ngIf="heaterOn" fxLayoutGap="20px" class="options">
+      <div fxFlexAlign="center">
+      Min Temp: <input matInput type="number" [(ngModel)]=heaterMinTemp type="number" min="70" max={{heaterMaxTemp}}>
+      </div>
+      <div fxFlexAlign="center">
+        Max Temp: <input matInput type="number" [(ngModel)]=heaterMaxTemp type="number" min={{heaterMinTemp}} max="80">
+      </div>
+    </div>
+
   </div>
 
 
@@ -125,6 +148,32 @@
       <mat-button-toggle [value]="true"> Enabled </mat-button-toggle>
       <mat-button-toggle [value]="false"> Disabled </mat-button-toggle>
     </mat-button-toggle-group>
+
+    <div fxLayout="row" *ngIf="pumpOn" fxLayoutGap="20px" class="options">
+      <div fxFlexAlign="center">
+        Pump Power:
+        <mat-slider
+          thumbLabel=true
+          [(ngModel)]=pumpPower
+          tickInterval="1"
+          min="0"
+          max="6">
+        </mat-slider>
+      </div>
+    </div>
+
   </div>
+
+
+  <div fxLayoutAlign="center center" >
+    <button mat-raised-button
+    color="primary"
+    (click)="onSave()"
+    class="saveButton">
+      Save Changes
+  </button>
+  </div>
+
+
 
 </div>
