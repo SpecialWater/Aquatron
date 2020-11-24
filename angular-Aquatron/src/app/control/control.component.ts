@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { SettingsService } from './../settings.service'
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-control',
@@ -28,10 +29,9 @@ heaterMinTemp: number;
 heaterMaxTemp: number;
 pumpPower: number;
 
-
   constructor(
-    private settingsService: SettingsService
-
+    private settingsService: SettingsService,
+    private _snackBar: MatSnackBar
   ) { }
 
   ngOnInit(): void {
@@ -70,6 +70,7 @@ pumpPower: number;
   }
 
   onSave(){
+
     this.lightUVStartTime = this.formatTime(this.lightUVStartTime);
     this.lightRefugiumStartTime = this.formatTime(this.lightRefugiumStartTime);
     this.gasInjectionStartTime = this.formatTime(this.gasInjectionStartTime);
@@ -109,6 +110,10 @@ pumpPower: number;
     // console.log(this.newSettings[0])
     this.settingsService.postSettings(this.newSettings[0])
 
+    this._snackBar.open('New Settings', 'Saved!', {
+      duration: 1500,
+    });
+
 
   }
 
@@ -137,6 +142,10 @@ pumpPower: number;
     }
 
     return timeVariable
+  }
+
+  openSnackBar(message: string, action: string) {
+
   }
 
 }

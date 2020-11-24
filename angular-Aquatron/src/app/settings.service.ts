@@ -15,11 +15,13 @@ export class SettingsService {
   getSettings() {
     // console.log('https://localhost:5001/api' + current_route)
     //return this.http.get('https://localhost:5001/api' + current_route)
-    return this.http.get('http://localhost:5001/settings/get')
+    return this.http.get('https://pruetpiflask.azurewebsites.net/settings/get')
+    // return this.http.get('http://localhost:5001/settings/get')
   }
 
   postSettings(data){
-    return this.http.post<any>('http://localhost:5001/settings/post',
+    // return this.http.post<any>('http://localhost:5001/settings/post',
+    return this.http.post<any>('https://pruetpiflask.azurewebsites.net/settings/post',
       JSON.stringify(data),
       {headers: this.headers}).subscribe(
         // data => {console.log(data)}
