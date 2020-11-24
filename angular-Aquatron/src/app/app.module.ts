@@ -16,6 +16,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatButtonModule } from '@angular/material/button';
+import { MatSnackBarModule } from '@angular/material/snack-bar'
 
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { AppRoutingModule } from './app-routing.module';
@@ -46,6 +47,7 @@ import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
     MatToolbarModule,
     MatSliderModule,
     MatButtonModule,
+    MatSnackBarModule,
 
     NgxMaterialTimepickerModule
 
