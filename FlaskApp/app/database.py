@@ -11,8 +11,14 @@ class Database:
 class Client(Database):
     
     def __init__(self, containerName):
-        self.container = self.database.get_container_client(containerName)
-
-    def getContainer(self):
-        return self.container
+        self._name = containerName
+        self._container = self.database.get_container_client(self._name)
+        
+    def _get_container(self):
+        return self._container
     
+    def _set_container(self):
+        self._container = self.database.get_container_client(self._name)
+    
+    # Allows class.container to return the container
+    container = property(_get_container, _set_container)

@@ -11,6 +11,7 @@ export class ControlComponent implements OnInit {
 
 settings = <any>[];
 newSettings = <any>[];
+saveDisabled: boolean;
 
 gasInjectionOn: boolean;
 heaterOn: boolean;
@@ -41,6 +42,13 @@ pumpPower: number;
         this.parseSettings();
       }
     )
+
+    if(localStorage.getItem('id_token') != null){
+      this.saveDisabled = false;
+    } else {
+      this.saveDisabled = true;
+    }
+
   }
 
 
@@ -108,8 +116,7 @@ pumpPower: number;
     }];
 
     // console.log(this.newSettings[0])
-    this.settingsService.postSettings(this.newSettings[0])
-
+    this.settingsService.postSettings(this.newSettings[0]);
     this._snackBar.open('New Settings', 'Saved!', {
       duration: 1500,
     });

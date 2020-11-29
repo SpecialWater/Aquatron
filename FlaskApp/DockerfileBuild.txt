@@ -1,4 +1,4 @@
 Aqua Docker Commands:
 
-docker build -t flask-app:latest .   
+docker build -t flask-aquatron:latest .   
 docker run -d -p 5001:5001 flask-app 

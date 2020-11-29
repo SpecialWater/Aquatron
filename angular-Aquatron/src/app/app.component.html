@@ -3,8 +3,14 @@
   <div>Andrew's Aquarium</div>
   <div>
     <button mat-button
-    (click)="logout()">Log Out</button>
+    (click)="setLogin()">
+      <span *ngIf="tokenTrue && loggedInMessage">Log Out</span>
+      <span *ngIf="tokenTrue && !loggedInMessage">Log Out</span>
+      <span *ngIf="!tokenTrue && loggedInMessage">Log Out</span>
+      <span *ngIf="!tokenTrue && !loggedInMessage">Log In</span>
+    </button>
   </div>
+
 </mat-toolbar>
 
 

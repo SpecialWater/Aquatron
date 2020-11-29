@@ -1,0 +1,58 @@
+<!-- <form [formGroup]="form">
+    <fieldset>
+        <legend>Login</legend>
+        <div class="form-field">
+            <label>Email:</label>
+            <input name="email" formControlName="email">
+        </div>
+        <div class="form-field">
+            <label>Password:</label>
+            <input name="password" formControlName="password"
+                   type="password">
+        </div>
+    </fieldset>
+    <div class="form-buttons">
+        <button class="button button-primary"
+                (click)="login()">Login</button>
+    </div>
+</form> -->
+
+<div class="wrapper">
+    <div class="wrapped-div">
+      <div class="tab-header">
+        <h2 routerLink='/login' routerLinkActive='active'>Sign In</h2>
+        <!-- <h2 routerLink='/user/registration' routerLinkActive='active'>Sign Up</h2> -->
+      </div>
+      <div class="row">
+        <div class="col-md-10 offset-md-1">
+
+          <!-- <img src="/assets/img/single_user.png" class="mx-auto d-block"> -->
+          <form [formGroup]="form" class="mb-4" autocomplete="off" (submit)="login()">
+            <fieldset>
+              <div class="form-field">
+                <label>Username</label>
+                <input class="form-control" name="username" formControlName="username" required>
+              </div>
+              <div class="form-field">
+                <label>Password</label>
+                <input name="password" formControlName="password"
+                    type="password"
+                    class="form-control"
+                    required>
+              </div>
+            </fieldset>
+            <div class="form-row">
+              <div class="form-group col-md-8 offset-md-2">
+                <button type="submit" class="btn btn-lg btn-block">Log In</button>
+              </div>
+            </div>
+          </form>
+
+          <div *ngIf="badLogin" style="text-align: center">
+              <span style="color: red">Incorrect Username or Password</span>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>

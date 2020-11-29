@@ -3,12 +3,16 @@ import { NgModule } from '@angular/core';
 
 import { HttpClientModule } from "@angular/common/http";
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { ControlComponent } from './control/control.component';
 import { ChartComponent } from './chart/chart.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { LoginComponent } from './login/login.component';
+
+
+
 
 import { MatToolbarModule } from  '@angular/material/toolbar';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -30,7 +34,8 @@ import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
     AppComponent,
     HomeComponent,
     ControlComponent,
-    ChartComponent
+    ChartComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,
