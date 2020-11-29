@@ -9,8 +9,8 @@ export class SettingsService {
 
   // very important that JSON is formated in "record" format (see pandas to_json doc)
   getSettings() {
-    // return this.http.get('https://pruetpiflask.azurewebsites.net/settings/get')
-    return this.http.get('http://localhost:5001/settings/get')
+    return this.http.get('https://pruetpiflask.azurewebsites.net/settings/get')
+    //return this.http.get('http://localhost:5001/settings/get')
   }
 
   postSettings(data){
@@ -19,8 +19,8 @@ export class SettingsService {
       'Authorization': 'Bearer ' + localStorage.getItem('id_token')
     })
 
-    // return this.http.post<any>('https://pruetpiflask.azurewebsites.net/settings/post',
-    return this.http.post<any>('http://localhost:5001/settings/post',
+    return this.http.post<any>('https://pruetpiflask.azurewebsites.net/settings/post',
+    // return this.http.post<any>('http://localhost:5001/settings/post',
       JSON.stringify(data),
       {headers: headers}).subscribe(
         // data => {console.log(data)}
