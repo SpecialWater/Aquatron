@@ -1,5 +1,6 @@
 .attribute {
   width: 125px;
+
 }
 
 .timersTitle {
@@ -22,9 +23,12 @@
   width: 100px;
   height: 50px;
   max-height: 50px;
+
 }
 
 .mat-button-toggle-group {
   height: 50px;
   max-height: 50px;
+
 }
+
