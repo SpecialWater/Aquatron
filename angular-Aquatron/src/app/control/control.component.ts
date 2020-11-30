@@ -43,10 +43,10 @@ pumpPower: number;
       }
     )
 
-    if(localStorage.getItem('id_token') != null){
-      this.saveDisabled = false;
-    } else {
+    if(localStorage.getItem('access') != 'admin'){
       this.saveDisabled = true;
+    } else {
+      this.saveDisabled = false;
     }
 
   }

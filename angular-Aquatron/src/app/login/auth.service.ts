@@ -4,6 +4,7 @@ import { tap, shareReplay } from 'rxjs/operators';
 import * as moment from 'moment';
 import { catchError } from 'rxjs/operators';
 import { BehaviorSubject } from 'rxjs';
+import jwt_decode from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root'
@@ -28,8 +29,10 @@ export class AuthService {
   }
 
   private setSession(authResult) {
+      var decodeToken = this.getDecodedAccessToken(authResult.access_token);
       const expiresAt = moment().add(authResult.expiresIn,'second');
       localStorage.setItem('id_token', authResult.access_token);
+      localStorage.setItem('access', decodeToken.identity),
       localStorage.setItem("expires_at", JSON.stringify(expiresAt.valueOf()));
       // console.log('From Auth Service: ' + authResult.access_token)
   }
@@ -37,6 +40,7 @@ export class AuthService {
   logout() {
       localStorage.removeItem("id_token");
       localStorage.removeItem("expires_at");
+      localStorage.removeItem('access')
       this.loginSource.next(false)
   }
 
@@ -53,4 +57,15 @@ export class AuthService {
       const expiresAt = JSON.parse(expiration);
       return moment(expiresAt);
   }
+
+  getDecodedAccessToken(token: string): any {
+    try{
+        return jwt_decode(token);
+    }
+    catch(Error){
+        return null;
+    }
+  }
+
+
 }

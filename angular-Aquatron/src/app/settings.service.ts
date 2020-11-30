@@ -14,12 +14,22 @@ export class SettingsService {
   }
 
   postSettings(data){
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + localStorage.getItem('id_token')
-    })
+    // const headers = new HttpHeaders({
+    //   'Content-Type': 'application/json',
+    //   'Authorization': 'Bearer ' + localStorage.getItem('id_token')
+    // })
 
-    return this.http.post<any>('https://pruetpiflask.azurewebsites.net/settings/post',
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'})
+
+    // return this.http.post<any>('https://pruetpiflask.azurewebsites.net/settings/post',
+    // // return this.http.post<any>('http://localhost:5001/settings/post',
+    //   JSON.stringify(data),
+    //   {headers: headers}).subscribe(
+    //     // data => {console.log(data)}
+    //   );
+
+      return this.http.post<any>('https://pruetpiflask.azurewebsites.net/settings/post',
     // return this.http.post<any>('http://localhost:5001/settings/post',
       JSON.stringify(data),
       {headers: headers}).subscribe(
