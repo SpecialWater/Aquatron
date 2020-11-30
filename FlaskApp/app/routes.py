@@ -25,9 +25,12 @@ def index():
 
 @app.route('/state/post', methods=['POST'])
 @cross_origin()
+@jwt_required
 def postState():
     if not request.is_json:
         return jsonify({"msg": "Missing JSON in request"}), 400
+    if get_jwt_identity() != 'admin':
+        return jsonify({"msg": "Access denied"}), 400
     
     id = getID()
     partition = getPartition()
@@ -44,6 +47,8 @@ def postState():
 def postSettings():
     if not request.is_json:
         return jsonify({"msg": "Missing JSON in request"}), 400
+    if get_jwt_identity() != 'admin':
+        return jsonify({"msg": "Access denied"}), 400
     
     settings = deepcopy(request.json)    
     id = getID()
@@ -122,7 +127,6 @@ def login():
     if not verifyPass:
         return jsonify({"msg": "Bad username or password"}), 401
     else:
-        access_token = create_access_token(identity=username)
+        access_token = create_access_token(identity=user["Access"])
     
     return jsonify(access_token=access_token), 200
-
