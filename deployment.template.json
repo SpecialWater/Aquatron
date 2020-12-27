@@ -64,6 +64,40 @@
             }
           },
           "modules": {
+<<<<<<< HEAD
+=======
+            "Sensors": {
+              "version": "1.029",
+              "type": "docker",
+              "status": "running",
+              "restartPolicy": "always",
+              "settings": {
+                "image": "iotstuff.azurecr.io/sensors:latest",
+                "createOptions": {
+                  "HostConfig":{
+                    "Devices": [
+                      {
+                        "PathOnHost": "/dev/mem",
+                        "PathInContainer": "/dev/mem",
+                        "CgroupPermissions": "rwm"
+                      },
+                      {
+                        "PathOnHost": "/dev/gpiomem",
+                        "PathInContainer": "/dev/gpiomem",
+                        "CgroupPermissions": "rwm"
+                      }],
+                    "LogConfig": {
+                      "Type": "json-file",
+                      "Config": {
+                          "max-size": "10m",
+                          "max-file": "3"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+>>>>>>> python modules added
           }
         }
       },

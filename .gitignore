@@ -1,9 +1,19 @@
+<<<<<<< HEAD
+=======
+Go/bin
+Go/pkg
+Go/github.com
+>>>>>>> python modules added
 *.exe
 *.list
 *.gpg
 .env
+<<<<<<< HEAD
 /config
 venv/
 *.pyc
 *.pptx
 **/config.py
+=======
+/config
+>>>>>>> python modules added
