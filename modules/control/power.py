@@ -1,17 +1,31 @@
 import pigpio
 import time
 
-pi1 = pigpio.pi()       # pi1 accesses the local Pi's GPIO
 
-gpioList = [5, 6, 16, 17, 24, 25]
+class Power:
+    def __init__(self):
+        self.pi = pigpio.pi()  # accesses the local Pi's GPIO
+        self.outlet = {
+            "Light_UV": 5,
+            "Light_Refugium": 6,
+            "GasInjection": 16,
+            "Heater": 17,
+            "unused1": 24,
+            "unused2": 25
+        }
 
-for i in range(100):
-    for relay in gpioList:
-        time.sleep(.05)
-        pi1.write(relay, 0)
-        time.sleep(.05)
-        pi1.write(relay, 1)
-        time.sleep(.05)
+        self.start_up()
 
-pi1.write(17, 0)
-pi1.write(6, 1)
+        print("Outlets ready")
+
+    # Ensure everything starts out in fully "off" state
+    def start_up(self):
+        for outlet in self.outlet.keys():
+            self.power_on(outlet)
+            self.power_off(outlet)
+
+    def power_on(self, device):
+        self.pi.write(self.outlet[device], 0)
+
+    def power_off(self, device):
+        self.pi.write(self.outlet[device], 1)
