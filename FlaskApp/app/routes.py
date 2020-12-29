@@ -4,7 +4,7 @@ from flask import Flask, jsonify, request
 from flask_cors import cross_origin
 from passlib.hash import sha512_crypt
 from app.database import Client
-from app.utility import getID, getPartition
+from app.utility import getID, getPartition, send_C2D_message
 from app.iot import Iot
 from copy import deepcopy
 from flask_jwt_extended import (
@@ -18,7 +18,6 @@ AquaState = Client('State').container
 AquaSettings = Client('Settings').container
 AquaMaster = Client('Master').container
 AquaUser = Client('User').container
-iot_messanger = Iot()
 
 @app.route('/')
 @app.route('/index')
@@ -65,7 +64,7 @@ def postSettings():
     AquaSettings.create_item(settings)
     AquaMaster.upsert_item(master)
     
-    iot_messanger.send_C2D_message()
+    send_C2D_message()
     
     return request.json
 
