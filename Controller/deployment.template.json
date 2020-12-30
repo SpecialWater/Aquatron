@@ -64,8 +64,6 @@
             }
           },
           "modules": {
-<<<<<<< HEAD
-=======
             "Sensors": {
               "version": "1.029",
               "type": "docker",
@@ -97,7 +95,6 @@
                 }
               }
             }
->>>>>>> python modules added
           }
         }
       },

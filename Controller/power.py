@@ -4,7 +4,8 @@ import time
 
 class Power:
     def __init__(self):
-        self.pi = pigpio.pi()  # accesses the local Pi's GPIO
+        # accesses the local Pi's GPIO
+        self.pi = pigpio.pi('raspberrypi', 8888)  
         self.outlet = {
             "Light_UV": 5,
             "Light_Refugium": 6,
