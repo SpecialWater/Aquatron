@@ -3,7 +3,7 @@
     "modulesContent": {
       "$edgeAgent": {
         "properties.desired": {
-          "schemaVersion": "1.0",
+          "schemaVersion": "1.1",
           "runtime": {
             "type": "docker",
             "settings": {
@@ -22,7 +22,7 @@
             "edgeAgent": {
               "type": "docker",
               "settings": {
-                "image": "mcr.microsoft.com/azureiotedge-agent:1.0",
+                "image": "mcr.microsoft.com/azureiotedge-agent:1.2.0-rc3",
                 "createOptions": {}
               }
             },
@@ -31,7 +31,7 @@
               "status": "running",
               "restartPolicy": "always",
               "settings": {
-                "image": "mcr.microsoft.com/azureiotedge-hub:1.0",
+                "image": "mcr.microsoft.com/azureiotedge-hub:1.2.0-rc3",
                 "createOptions": {
                   "HostConfig": {
                     "PortBindings": {
@@ -64,33 +64,22 @@
             }
           },
           "modules": {
-            "Sensors": {
-              "version": "1.029",
+            "Controller": {
+              "version": "1.0",
               "type": "docker",
               "status": "running",
               "restartPolicy": "always",
               "settings": {
-                "image": "iotstuff.azurecr.io/sensors:latest",
+                "image": "${MODULES.Controller}",
                 "createOptions": {
-                  "HostConfig":{
-                    "Devices": [
-                      {
-                        "PathOnHost": "/dev/mem",
-                        "PathInContainer": "/dev/mem",
-                        "CgroupPermissions": "rwm"
-                      },
-                      {
-                        "PathOnHost": "/dev/gpiomem",
-                        "PathInContainer": "/dev/gpiomem",
-                        "CgroupPermissions": "rwm"
-                      }],
-                    "LogConfig": {
-                      "Type": "json-file",
-                      "Config": {
-                          "max-size": "10m",
-                          "max-file": "3"
-                      }
+                  "NetworkingConfig": {
+                    "EndpointsConfig": {
+                      "host": {}
                     }
+                  },
+                  "HostConfig": {
+                    "NetworkMode": "host",
+                    "Privileged": true
                   }
                 }
               }
@@ -100,7 +89,7 @@
       },
       "$edgeHub": {
         "properties.desired": {
-          "schemaVersion": "1.0",
+          "schemaVersion": "1.1",
           "routes": { },
           "storeAndForwardConfiguration": {
             "timeToLiveSecs": 7200
