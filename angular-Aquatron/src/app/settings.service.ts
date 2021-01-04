@@ -7,7 +7,6 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 export class SettingsService {
 
-  // very important that JSON is formated in "record" format (see pandas to_json doc)
   getSettings() {
     return this.http.get('https://pruetpiflask.azurewebsites.net/settings/get')
     //return this.http.get('http://localhost:5001/settings/get')
