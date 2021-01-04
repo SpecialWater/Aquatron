@@ -1,1 +1,11 @@
-<p>chart works!</p>
+
+<highcharts-chart
+  [Highcharts]="Highcharts"
+
+  [constructorType]="chartConstructor"
+  [options]="chartOptions"
+  [(update)]="updateFlag"
+  [oneToOne]="oneToOneFlag"
+
+  class="chartLayout"
+></highcharts-chart>

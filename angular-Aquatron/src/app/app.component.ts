@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from "./login/./auth.service"
 import { Router } from "@angular/router";
+import * as Highcharts from 'highcharts';
 
 @Component({
   selector: 'app-root',

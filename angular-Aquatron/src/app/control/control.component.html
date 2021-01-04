@@ -2,16 +2,12 @@
 <div fxLayout="column" fxLayoutGap="30px">
 
   <div fxLayout="row wrap" fxLayoutGap="20px">
-    <div fxFlexAlign="center" class="attribute">
-    <b>UV Light</b>
+    <div fxFlexAlign="center" class="attribute" fxLayoutGap="20px">
+      <mat-checkbox
+      [(ngModel)]=lightUVOn>
+      <b>UV Light</b>
+      </mat-checkbox>
     </div>
-
-    <mat-button-toggle-group
-    [(ngModel)]=lightUVOn
-    fxFlexAlign="center">
-      <mat-button-toggle [value]="true"> Enabled </mat-button-toggle>
-      <mat-button-toggle [value]="false"> Disabled </mat-button-toggle>
-    </mat-button-toggle-group>
 
     <div *ngIf="lightUVOn" fxLayout="column" class="options">
       <div fxLayout="row">
@@ -39,16 +35,12 @@
 
 
   <div fxLayout="row wrap" fxLayoutGap="20px">
-    <div fxFlexAlign="center" class="attribute">
-    <b>Refugium Light</b>
+    <div fxFlexAlign="center" class="attribute" fxLayoutGap="20px">
+      <mat-checkbox
+      [(ngModel)]=lightRefugiumOn>
+      <b>Refugium Light</b>
+      </mat-checkbox>
     </div>
-
-    <mat-button-toggle-group
-    [(ngModel)]=lightRefugiumOn
-    fxFlexAlign="center">
-      <mat-button-toggle [value]="true"> Enabled </mat-button-toggle>
-      <mat-button-toggle [value]="false"> Disabled </mat-button-toggle>
-    </mat-button-toggle-group>
 
     <div *ngIf="lightRefugiumOn" fxLayout="column" class="options">
       <div fxLayout="row">
@@ -61,6 +53,7 @@
           </ngx-timepicker-field>
         </div>
       </div>
+
       <div fxLayout="row">
         <div fxFlexAlign="center" class="timersTitle">
         Duration:
@@ -75,17 +68,13 @@
   </div>
 
 
-  <div fxLayout="row wrap" fxLayoutGap="20px">
-    <div fxFlexAlign="center" class="attribute">
-    <b>Gas Injection</b>
+  <div fxLayout="row wrap" fxLayoutGap="20px" fxLayoutGap="20px">
+    <div fxFlexAlign="center" class="attribute" fxLayoutGap="20px">
+      <mat-checkbox
+      [(ngModel)]=gasInjectionOn>
+      <b>Gas Injection</b>
+      </mat-checkbox>
     </div>
-
-    <mat-button-toggle-group
-    [(ngModel)]=gasInjectionOn
-    fxFlexAlign="center">
-      <mat-button-toggle [value]="true"> Enabled </mat-button-toggle>
-      <mat-button-toggle [value]="false"> Disabled </mat-button-toggle>
-    </mat-button-toggle-group>
 
     <div *ngIf="gasInjectionOn" fxLayout="column" class="options">
       <div fxLayout="row">
@@ -113,17 +102,12 @@
 
 
   <div fxLayout="row wrap" fxLayoutGap="20px">
-    <div fxFlexAlign="center" class="attribute">
+    <div fxFlexAlign="center" class="attribute" fxLayoutGap="20px">
+      <mat-checkbox
+      [(ngModel)]=heaterOn>
       <b>Heater</b>
+      </mat-checkbox>
     </div>
-
-    <mat-button-toggle-group
-    [(ngModel)]=heaterOn
-    fxFlexAlign="center">
-      <mat-button-toggle [value]="true"> Enabled </mat-button-toggle>
-      <mat-button-toggle [value]="false"> Disabled </mat-button-toggle>
-    </mat-button-toggle-group>
-
 
     <div fxLayout="row" *ngIf="heaterOn" fxLayoutGap="20px" class="options">
       <div fxFlexAlign="center">
@@ -138,16 +122,12 @@
 
 
   <div fxLayout="row wrap" fxLayoutGap="20px">
-    <div fxFlexAlign="center" class="attribute">
-    <b>Pump</b>
+    <div fxFlexAlign="center" class="attribute" fxLayoutGap="20px">
+      <mat-checkbox
+      [(ngModel)]=pumpOn>
+      <b>Pump</b>
+      </mat-checkbox>
     </div>
-
-    <mat-button-toggle-group
-    [(ngModel)]=pumpOn
-    fxFlexAlign="center">
-      <mat-button-toggle [value]="true"> Enabled </mat-button-toggle>
-      <mat-button-toggle [value]="false"> Disabled </mat-button-toggle>
-    </mat-button-toggle-group>
 
     <div fxLayout="row" *ngIf="pumpOn" fxLayoutGap="20px" class="options">
       <div fxFlexAlign="center">
