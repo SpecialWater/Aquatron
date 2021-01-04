@@ -10,6 +10,7 @@ from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
     get_jwt_identity
 )
+import json
 
 jwt = JWTManager(app)
 AquaState = Client('State').container
@@ -76,6 +77,23 @@ def getSettings():
 
     currentSettings = AquaMaster.read_item("master", partition_key="AndrewPi")
     return currentSettings
+
+
+@app.route('/state/get/<variable>/<minutes>', methods=['GET'])
+@cross_origin()
+def getState(variable, minutes):
+
+    currentState = AquaState.query_items(
+        query="""SELECT * FROM c
+        WHERE DateTimeDiff("Minute", c.id, GetCurrentDateTime()) < @minutes""",
+        parameters=[dict(name="@minutes", value=int(minutes))],
+        enable_cross_partition_query=True
+    )
+
+    state = json.dumps([{'id': state['id'], variable: state[variable]}
+                        for state in currentState])
+
+    return state
 
 
 @app.route('/registerUser', methods=['POST'])
