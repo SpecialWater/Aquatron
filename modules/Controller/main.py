@@ -1,5 +1,5 @@
-from sensors.temperature import Temperature
-from control.power import Power
+from temperature import Temperature
+from power import Power
 
 from dotenv import load_dotenv
 import requests
@@ -16,11 +16,23 @@ class Main:
     load_dotenv()
 
     def __init__(self):
+        # self.URL = "http://192.168.179.227:5001"
+        self.URL = "https://pruetpiflask.azurewebsites.net"
         self.token = self.login()
         self.temp_sensor = Temperature()
         self.outlets = Power()
         self.tz = pytz.timezone('US/Central')
-        self.timed_outlets = ["GasInjection", "Light_Refugium", "Light_UV"]
+
+        # default state
+        self.state = {
+            "Temperature": 0,
+            "pH": 0,
+            "Light_UV_On": True,
+            "Light_Refugium_On": True,
+            "GasInjection_On": True,
+            "Heater_On": True,
+            "Pump_Power": 3
+        }
 
         asyncio.run(self.main())
 
@@ -29,8 +41,6 @@ class Main:
             self.iot_hub_login(),
             self.get_settings()
         )
-
-        print(self.settings)
 
         # set the mesage received handler on the client
         self.device_client.on_message_received = self.message_received_handler
@@ -42,12 +52,6 @@ class Main:
 
         # Finally, disconnect
         await self.device_client.disconnect()
-
-        # To do
-        # Need to set up a main loop which constantly runs
-        # Reads temps, reports current state, etc.
-        # Also needs to listen for changes to the Settings from flask
-        # and update those settings when they change
 
     def set_heater_outlet(self):
         if not self.settings["Heater"]["Enabled"]:
@@ -66,13 +70,18 @@ class Main:
 
             if turn_on:
                 self.outlets.power_on("Heater")
+            else:
+                self.outlets.power_off("Heater")
 
             print("Temp: {}, Heater On: {}".format(current_temp, turn_on))
+            self.state["Heater_On"] = turn_on
+            self.state["Temperature"] = current_temp
 
     def set_timed_outlets(self):
         current_time = datetime.now(self.tz)
+        timed_outlets = ["GasInjection", "Light_Refugium", "Light_UV"]
 
-        for outlet in self.timed_outlets:
+        for outlet in timed_outlets:
             if not self.settings[outlet]["Enabled"]:
                 self.outlets.power_off(outlet)
                 print("{} is disabled".format(outlet))
@@ -88,6 +97,7 @@ class Main:
                     self.outlets.power_off(outlet)
 
                 print("{} turned on: {}".format(outlet, turn_on))
+                self.state[outlet + "_On"] = turn_on
 
     # Check to see if outlet should be turned on or off
     # Applies to CO2, UV light and refugium light
@@ -101,9 +111,9 @@ class Main:
         minutes_timer = h_timer * 60 + m_timer
         minutes_end = minutes_start + minutes_timer
 
-        if minutes_start < minutes_now < minutes_end:
+        if minutes_start <= minutes_now <= minutes_end:
             return True
-        elif (minutes_end > 1440) and (minutes_now < minutes_end - 1440):
+        elif (minutes_end >= 1440) and (minutes_now <= minutes_end - 1440):
             return True
         else:
             return False
@@ -115,8 +125,9 @@ class Main:
             "password": os.getenv("FLASK_PASSWORD")
         })
 
+        url = self.URL + "/login"
         token = json.loads(requests.post(
-            url="https://pruetpiflask.azurewebsites.net/login",
+            url=url,
             data=flask_login,
             headers=headers
         ).text)
@@ -128,8 +139,9 @@ class Main:
     async def get_settings(self):
         headers = {"Authorization": "Bearer " + self.token["access_token"]}
 
+        url = self.URL + "/settings/get"
         settings = requests.get(
-            url="https://pruetpiflask.azurewebsites.net/settings/get",
+            url=url,
             headers=headers
         )
 
@@ -138,7 +150,6 @@ class Main:
 
         self.set_timed_outlets()
         self.set_heater_outlet()
-        return 'done'
 
     async def iot_hub_login(self):
         try:
@@ -157,7 +168,7 @@ class Main:
             raise
 
     # define behavior for receiving a message
-    # this could be a function or a coroutine
+    # Calls cosmos to get updated settings due to a saved change
     async def message_received_handler(self, message):
         print("the data in the message received was ")
         print(message.data)
@@ -166,14 +177,31 @@ class Main:
             self.get_settings()
         )
 
+        self.post_state()
+
+    def post_state(self):
+        headers = {
+            "Authorization": "Bearer " + self.token["access_token"],
+            'Content-Type': 'application/json'
+        }
+
+        url = self.URL + "/state/post"
+        payload = json.dumps(self.state)
+
+        settings = requests.post(
+            url=url,
+            data=payload,
+            headers=headers
+        )
+
     # define behavior for halting the application
     def stdin_listener(self):
-        counter = 0
         while True:
-            counter += 1
-            print(self.temp_sensor.getTemperature())
-            print(counter)
-            time.sleep(50)
+            self.set_timed_outlets()
+            self.set_heater_outlet()
+            self.post_state()
+            print(self.state)
+            time.sleep(60)
 
 
 if __name__ == "__main__":
