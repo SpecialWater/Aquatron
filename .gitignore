@@ -2,7 +2,8 @@
 *.list
 *.gpg
 .env
-/config
+**/config
 venv/
 *.pyc
 *.pptx
+**/config.py
