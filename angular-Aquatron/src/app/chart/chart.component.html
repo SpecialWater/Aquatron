@@ -3,7 +3,19 @@
   [Highcharts]="Highcharts"
 
   [constructorType]="chartConstructor"
-  [options]="chartOptions"
+  [options]="chartOptions[0].chartConfig"
+  [(update)]="updateFlag"
+  [oneToOne]="oneToOneFlag"
+
+  class="chartLayout"
+></highcharts-chart>
+
+
+<highcharts-chart
+  [Highcharts]="Highcharts"
+
+  [constructorType]="chartConstructor"
+  [options]="chartOptions[1].chartConfig"
   [(update)]="updateFlag"
   [oneToOne]="oneToOneFlag"
 

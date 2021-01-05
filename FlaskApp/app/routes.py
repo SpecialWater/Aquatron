@@ -79,19 +79,24 @@ def getSettings():
     return currentSettings
 
 
-@app.route('/state/get/<variable>/<minutes>', methods=['GET'])
+@app.route('/state/get/<minutes>', methods=['GET'])
 @cross_origin()
-def getState(variable, minutes):
+def getState(minutes):
 
     currentState = AquaState.query_items(
         query="""SELECT * FROM c
         WHERE DateTimeDiff("Minute", c.id, GetCurrentDateTime()) < @minutes""",
         parameters=[dict(name="@minutes", value=int(minutes))],
-        enable_cross_partition_query=True
+        enable_cross_partition_query=True,
+        populate_query_metrics=False
     )
 
-    state = json.dumps([{'id': state['id'], variable: state[variable]}
-                        for state in currentState])
+    # state = json.dumps([{'id': state['id'], 
+    #                      'Temperature': state['Temperature'],
+    #                      'pH': state['pH']}
+    #                     for state in currentState])
+    
+    state = json.dumps([state for state in currentState], indent=True)
 
     return state
 
