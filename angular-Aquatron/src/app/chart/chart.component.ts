@@ -165,8 +165,8 @@ export class ChartComponent implements OnInit {
       data: dataPh
     }
     this.pHChartOptions.yAxis = {
-      max: Math.max.apply(Math, dataPh) + 5,
-      min: Math.min.apply(Math, dataPh) - 5,
+      max: Math.max.apply(Math, dataPh) + 0.5,
+      min: Math.min.apply(Math, dataPh) - 0.5,
     }
 
     this.updateFlag = true;
