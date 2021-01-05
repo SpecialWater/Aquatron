@@ -53,6 +53,7 @@ import { HighchartsChartModule } from 'highcharts-angular';
     MatCheckboxModule,
 
     NgxMaterialTimepickerModule,
+
     HighchartsChartModule
 
   ],
