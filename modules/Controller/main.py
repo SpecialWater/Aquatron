@@ -200,7 +200,7 @@ class Main:
             self.set_timed_outlets()
             self.set_heater_outlet()
             self.post_state()
-            print(self.state)
+            print(self.state, datetime.now())
             time.sleep(60)
 
 
