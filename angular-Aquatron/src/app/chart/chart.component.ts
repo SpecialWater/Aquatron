@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { StateService } from './../state.service'
 import { Subscription, timer } from 'rxjs';
 import { max, switchMap } from 'rxjs/operators';
@@ -17,7 +17,7 @@ import * as Highcharts from "highcharts";
   templateUrl: './chart.component.html',
   styleUrls: ['./chart.component.css']
 })
-export class ChartComponent implements OnInit {
+export class ChartComponent implements OnInit, OnDestroy {
   minutes = 120
   Highcharts: typeof Highcharts = Highcharts; // required
 
@@ -33,8 +33,6 @@ export class ChartComponent implements OnInit {
       data: [],
       name: "Temperature",
       type: 'spline',
-      pointInterval: 60 * 1000,
-      pointStart: Date.now() - 3600 * (6 + this.minutes / 60) * 1000 // start 6 hours before right now (UTC -> Central)
       }
     ],
     credits: {
@@ -47,14 +45,16 @@ export class ChartComponent implements OnInit {
       title: {
         text: 'Time',
       },
-      // min: Date.now() - 3600 * (6 + this.minutes / 60) * 1000, // start 7 hours before right now (UTC -> Central)
       type: 'datetime',
-      startOnTick: false,
-      minPadding:0.015,
-      dateTimeLabelFormats: {
-        minute: '%H:%M',
-        hour: '%H:%M',
+      labels: {
+        formatter: function() {
+          return Highcharts.dateFormat('%H:%M', (this.value - 3600 * 6 * 1000));
+        },
+        step: 1,
+
       },
+      maxPadding:0.015,
+      minPadding:0.015,
     },
     yAxis: {
       title: {
@@ -67,7 +67,7 @@ export class ChartComponent implements OnInit {
     legend: {
       enabled: false
     }
-  }; // required
+  };
 
   pHChartOptions: Highcharts.Options = {
     series: [
@@ -75,8 +75,6 @@ export class ChartComponent implements OnInit {
       data: [],
       name: "pH",
       type: 'spline',
-      pointInterval: 60 * 1000,
-      pointStart: Date.now() - 3600 * (6 + this.minutes / 60) * 1000 // start 6 hours before right now (UTC -> Central)
       }
     ],
     credits: {
@@ -89,14 +87,16 @@ export class ChartComponent implements OnInit {
       title: {
         text: 'Time',
       },
-      // min: Date.now() - 3600 * (6 + this.minutes / 60) * 1000, // start 7 hours before right now (UTC -> Central)
       type: 'datetime',
-      startOnTick: false,
-      minPadding:0.015,
-      dateTimeLabelFormats: {
-        minute: '%H:%M',
-        hour: '%H:%M',
+      labels: {
+        formatter: function() {
+          return Highcharts.dateFormat('%H:%M', (this.value - 3600 * 6 * 1000));
+        },
+        step: 1,
+
       },
+      maxPadding:0.015,
+      minPadding:0.015,
     },
     yAxis: {
       title: {
@@ -109,14 +109,12 @@ export class ChartComponent implements OnInit {
     legend: {
       enabled: false
     }
-  }; // required
+  };
 
   chartOptions = [
     { chartConfig: this.temperatureChartOptions },
     { chartConfig: this.pHChartOptions },
   ];
-
-
 
   subscriptionState: Subscription;
 
@@ -126,47 +124,59 @@ export class ChartComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.subscriptionState = timer(0, 10000).pipe(
+    this.subscriptionState = timer(0, 60000).pipe(
       switchMap(() => this.stateService.getState(this.minutes))
       ).subscribe(result => {
         var dataTemperature = this.parse_data(result, 'Temperature');
         var dataPH = this.parse_data(result, 'pH');
         this.update_chart(dataTemperature, dataPH);
 
-        console.log(result)
       });
 
+  }
+
+  ngOnDestroy() {
+    this.subscriptionState.unsubscribe();
   }
 
 
   parse_data(data, variable) {
     var arrayData = [];
+    var minVal = 999;
+    var maxVal = 0;
+
     for (var row in data) {
-      arrayData.push(data[row][variable]);
+      arrayData.push([Date.parse(data[row]["id"]), data[row][variable]]);
+      if(data[row][variable] > maxVal){
+        maxVal = data[row][variable]
+      }
+      if(data[row][variable] < minVal){
+        minVal = data[row][variable]
+      }
     }
-    return arrayData
+    return [arrayData, minVal, maxVal]
   }
 
   update_chart(dataTemp, dataPh) {
-
+    console.log(dataTemp)
     this.temperatureChartOptions.series[0] = {
       name: "Temperature",
       type: 'spline',
-      data: dataTemp
+      data: dataTemp[0],
     }
     this.temperatureChartOptions.yAxis = {
-      max: Math.max.apply(Math, dataTemp) + 5,
-      min: Math.min.apply(Math, dataTemp) - 5,
+      max: dataTemp[2] + 5,
+      min: dataTemp[1] - 5,
     }
 
     this.pHChartOptions.series[0] = {
       name: "pH",
       type: 'spline',
-      data: dataPh
+      data: dataPh[0],
     }
     this.pHChartOptions.yAxis = {
-      max: Math.max.apply(Math, dataPh) + 0.5,
-      min: Math.min.apply(Math, dataPh) - 0.5,
+      max: dataPh[2] + 0.5,
+      min: dataPh[1] - 0.5,
     }
 
     this.updateFlag = true;

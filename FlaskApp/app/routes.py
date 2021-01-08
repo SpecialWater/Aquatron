@@ -4,7 +4,8 @@ from flask import Flask, jsonify, request
 from flask_cors import cross_origin
 from passlib.hash import sha512_crypt
 from app.database import Client
-from app.utility import getID, getPartition, send_C2D_message
+from app.utility import get_ID, get_partition, get_partition_yesterday, \
+    send_C2D_message, check_times
 from copy import deepcopy
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
@@ -34,8 +35,8 @@ def postState():
     if get_jwt_identity() != 'admin':
         return jsonify({"msg": "Access denied"}), 400
 
-    id = getID()
-    partition = getPartition()
+    id = get_ID()
+    partition = get_partition()
     request.json['id'] = id
     request.json['reportDate'] = partition
     AquaState.create_item(request.json)
@@ -54,8 +55,8 @@ def postSettings():
         return jsonify({"msg": "Access denied"}), 400
 
     settings = deepcopy(request.json)
-    id = getID()
-    partition = getPartition()
+    id = get_ID()
+    partition = get_partition()
     settings['id'] = id
     settings['reportDate'] = partition
 
@@ -82,22 +83,31 @@ def getSettings():
 @app.route('/state/get/<minutes>', methods=['GET'])
 @cross_origin()
 def getState(minutes):
+    today = get_partition()
+    yesterday = get_partition_yesterday()
 
-    currentState = AquaState.query_items(
-        query="""SELECT * FROM c
-        WHERE DateTimeDiff("Minute", c.id, GetCurrentDateTime()) < @minutes""",
-        parameters=[dict(name="@minutes", value=int(minutes))],
-        enable_cross_partition_query=True,
+    stateToday = AquaState.query_items(
+        query="SELECT * FROM c",
+        partition_key=today,
+        enable_cross_partition_query=False,
         populate_query_metrics=False
     )
 
-    # state = json.dumps([{'id': state['id'], 
-    #                      'Temperature': state['Temperature'],
-    #                      'pH': state['pH']}
-    #                     for state in currentState])
-    
-    state = json.dumps([state for state in currentState], indent=True)
+    stateYesterday = AquaState.query_items(
+        query="SELECT * FROM c",
+        partition_key=yesterday,
+        enable_cross_partition_query=False,
+        populate_query_metrics=False
+    )
 
+    returnState = [state for state in stateToday
+                   if check_times(state["id"], minutes)]
+
+    returnState.extend([state for state in stateYesterday
+                        if check_times(state["id"], minutes)])
+
+    # state = json.dumps([state for state in currentState], indent=True)
+    state = json.dumps(returnState, indent=True)
     return state
 
 
@@ -157,7 +167,7 @@ def login():
     if not verifyPass:
         return jsonify({"msg": "Bad username or password"}), 401
     else:
-        access_token = create_access_token(identity=user["Access"], expires_delta=False)
+        access_token = create_access_token(identity=user["Access"],
+                                           expires_delta=False)
 
     return jsonify(access_token=access_token), 200
-
