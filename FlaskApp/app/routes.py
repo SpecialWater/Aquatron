@@ -157,6 +157,7 @@ def login():
     if not verifyPass:
         return jsonify({"msg": "Bad username or password"}), 401
     else:
-        access_token = create_access_token(identity=user["Access"])
+        access_token = create_access_token(identity=user["Access"], expires_delta=False)
 
     return jsonify(access_token=access_token), 200
+
