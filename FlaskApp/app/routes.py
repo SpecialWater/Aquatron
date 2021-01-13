@@ -188,8 +188,9 @@ def test_disconnect():
 
 @socketio.on('my event')
 def test_message(message):
-    print(message)
-    emit('my response', {'data': 'hi Angular user'})
+    data = {"user": "Flask", "message": "Flask says hello!"}
+    print(data)
+    emit('my response', data)
 
 @socketio.on('my broadcast event')
 def test_message(message):

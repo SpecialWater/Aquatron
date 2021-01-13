@@ -31,11 +31,16 @@ export class SocketComponent implements OnInit {
     });
   }
 
+  sendmessage(message) {
+    var payload = { message: message }
+    this.socketio.emit('my event',  JSON.stringify(payload));
+  }
 
 
   sendmessageAll(user, message) {
     var payload = { user: user, message: message }
     this.socketio.emit('my broadcast event',  JSON.stringify(payload));
+    // this.sendmessage(message)
     this.message = ""
   }
 
