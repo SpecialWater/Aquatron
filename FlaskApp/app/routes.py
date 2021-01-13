@@ -1,7 +1,8 @@
 from app.config import Config
-from app import app
+from app import app, socketio
 from flask import Flask, jsonify, request
 from flask_cors import cross_origin
+from flask_socketio import SocketIO, emit
 from passlib.hash import sha512_crypt
 from app.database import Client
 from app.utility import get_ID, get_partition, get_partition_yesterday, \
@@ -53,6 +54,8 @@ def postSettings():
         return jsonify({"msg": "Missing JSON in request"}), 400
     if get_jwt_identity() != 'admin':
         return jsonify({"msg": "Access denied"}), 400
+
+    test_message('hello!')
 
     settings = deepcopy(request.json)
     id = get_ID()
@@ -171,3 +174,23 @@ def login():
                                            expires_delta=False)
 
     return jsonify(access_token=access_token), 200
+
+
+
+@socketio.on('connect')
+def test_connect():
+    print('connected!')
+    emit('my response', {'data': 'Connected'})
+    
+@socketio.on('disconnect')
+def test_disconnect():
+    print('Client disconnected')
+    
+@socketio.on('my event')
+def test_message(message):
+    print(message)
+    emit('my response', {'data': 'hi lame person'})
+
+@socketio.on('my broadcast event')
+def test_message(message):
+    emit('my response', {'data': message['data']}, broadcast=True)

@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { SettingsService } from './../settings.service'
 import { MatSnackBar } from '@angular/material/snack-bar';
+
+import * as io from 'socket.io-client';
 
 @Component({
   selector: 'app-control',
@@ -8,6 +10,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   styleUrls: ['./control.component.css']
 })
 export class ControlComponent implements OnInit {
+
+private socketio: SocketIOClient.Socket;
 
 settings = <any>[];
 newSettings = <any>[];
@@ -36,6 +40,10 @@ pumpPower: number;
   ) { }
 
   ngOnInit(): void {
+
+    this.connect();
+    this.setReceiveMethod();
+
     this.settingsService.getSettings().subscribe(
       res => {
         this.settings = res;
@@ -48,7 +56,20 @@ pumpPower: number;
     } else {
       this.saveDisabled = false;
     }
+  }
 
+  connect(){
+    this.socketio = io('http://localhost:5000');
+  }
+
+  setReceiveMethod() {
+    this.socketio.on('my response', (data) => {
+      console.log(data);
+    });
+  }
+
+  sendmessage() {
+    this.socketio.emit('my event', 'Hi-flask');
   }
 
 
