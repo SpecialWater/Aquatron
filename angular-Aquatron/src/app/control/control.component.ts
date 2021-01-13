@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { SettingsService } from './../settings.service'
 import { MatSnackBar } from '@angular/material/snack-bar';
 
@@ -41,9 +41,6 @@ pumpPower: number;
 
   ngOnInit(): void {
 
-    this.connect();
-    this.setReceiveMethod();
-
     this.settingsService.getSettings().subscribe(
       res => {
         this.settings = res;
@@ -57,21 +54,6 @@ pumpPower: number;
       this.saveDisabled = false;
     }
   }
-
-  connect(){
-    this.socketio = io('http://localhost:5000');
-  }
-
-  setReceiveMethod() {
-    this.socketio.on('my response', (data) => {
-      console.log(data);
-    });
-  }
-
-  sendmessage() {
-    this.socketio.emit('my event', 'Hi-flask');
-  }
-
 
   parseSettings(){
 

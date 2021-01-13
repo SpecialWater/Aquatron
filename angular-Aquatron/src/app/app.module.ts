@@ -25,16 +25,18 @@ import { AppRoutingModule } from './app-routing.module';
 
 import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
 import { HighchartsChartModule } from 'highcharts-angular';
+import { SocketComponent } from './socket/socket.component';
 
 
 @NgModule({
-  declarations: [
+  declarations: [	
     AppComponent,
     HomeComponent,
     ControlComponent,
     ChartComponent,
-    LoginComponent
-  ],
+    LoginComponent,
+      SocketComponent
+   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,

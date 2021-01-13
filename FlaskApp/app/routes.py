@@ -180,17 +180,19 @@ def login():
 @socketio.on('connect')
 def test_connect():
     print('connected!')
-    emit('my response', {'data': 'Connected'})
-    
+    emit('login response', {'data': 'Connected'})
+
 @socketio.on('disconnect')
 def test_disconnect():
     print('Client disconnected')
-    
+
 @socketio.on('my event')
 def test_message(message):
     print(message)
-    emit('my response', {'data': 'hi lame person'})
+    emit('my response', {'data': 'hi Angular user'})
 
 @socketio.on('my broadcast event')
 def test_message(message):
-    emit('my response', {'data': message['data']}, broadcast=True)
+    data = json.loads(message)
+    print(data)
+    emit('my response', data, broadcast=True)
