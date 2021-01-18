@@ -12,12 +12,9 @@ RUN apt-get install --reinstall build-essential -y
 COPY requirements.txt requirements.txt
 RUN pip3 install --upgrade pip
 
-
 RUN pip3 install -r requirements.txt
 
 COPY . .
 
-EXPOSE 5001
-
-ENTRYPOINT [ "python3" ]
-CMD [ "application.py" ]
+EXPOSE 5000
+ENTRYPOINT ["gunicorn", "--config", "gunicorn_config.py", "application:app"]
