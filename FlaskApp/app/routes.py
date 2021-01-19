@@ -1,7 +1,8 @@
 from app.config import Config
-from app import app
+from app import app, socketio
 from flask import Flask, jsonify, request
 from flask_cors import cross_origin
+from flask_socketio import SocketIO, emit
 from passlib.hash import sha512_crypt
 from app.database import Client
 from app.utility import get_ID, get_partition, get_partition_yesterday, \
@@ -171,3 +172,26 @@ def login():
                                            expires_delta=False)
 
     return jsonify(access_token=access_token), 200
+
+
+
+@socketio.on('connect')
+def test_connect():
+    print('connected!')
+    emit('login response', {'data': 'Connected'})
+
+@socketio.on('disconnect')
+def test_disconnect():
+    print('Client disconnected')
+
+@socketio.on('my event')
+def test_message(message):
+    data = {"user": "Flask", "message": "Flask says hello!"}
+    print(data)
+    emit('my response', data)
+
+@socketio.on('my broadcast event')
+def test_message(message):
+    data = json.loads(message)
+    print(data)
+    emit('my response', data, broadcast=True)

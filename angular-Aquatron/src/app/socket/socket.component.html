@@ -1,0 +1,15 @@
+
+Username: <input [(ngModel)]="user">
+<br>
+Message: <input [(ngModel)]="message">
+<br>
+
+
+<button (click)="sendmessageAll(user, message)">Broadcast</button>
+
+<br><br>
+
+<div *ngFor="let item of conversation">
+  {{ item["user"] }}: {{ item["message"] }}
+  <br>
+</div>

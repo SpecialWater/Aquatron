@@ -10,8 +10,8 @@ export class StateService {
   getState(minutes) {
     const URL = 'https://pruetpiflask.azurewebsites.net/state/get/'
 
-    return this.http.get(URL + minutes.toString())
-    //return this.http.get('http://localhost:5001/settings/get')
+    // return this.http.get(URL + minutes.toString())
+    return this.http.get('http://localhost:5000/state/get/' + minutes.toString())
   }
 
   constructor(private http: HttpClient) { }

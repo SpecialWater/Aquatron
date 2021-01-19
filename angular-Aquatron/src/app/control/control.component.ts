@@ -2,12 +2,16 @@ import { Component, OnInit } from '@angular/core';
 import { SettingsService } from './../settings.service'
 import { MatSnackBar } from '@angular/material/snack-bar';
 
+import * as io from 'socket.io-client';
+
 @Component({
   selector: 'app-control',
   templateUrl: './control.component.html',
   styleUrls: ['./control.component.css']
 })
 export class ControlComponent implements OnInit {
+
+private socketio: SocketIOClient.Socket;
 
 settings = <any>[];
 newSettings = <any>[];
@@ -36,6 +40,7 @@ pumpPower: number;
   ) { }
 
   ngOnInit(): void {
+
     this.settingsService.getSettings().subscribe(
       res => {
         this.settings = res;
@@ -48,9 +53,7 @@ pumpPower: number;
     } else {
       this.saveDisabled = false;
     }
-
   }
-
 
   parseSettings(){
 
