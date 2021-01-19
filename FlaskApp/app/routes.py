@@ -55,8 +55,6 @@ def postSettings():
     if get_jwt_identity() != 'admin':
         return jsonify({"msg": "Access denied"}), 400
 
-    test_message('hello!')
-
     settings = deepcopy(request.json)
     id = get_ID()
     partition = get_partition()
