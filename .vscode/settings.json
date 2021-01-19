@@ -2,8 +2,8 @@
     "python.linting.pycodestyleEnabled": true,
     "python.linting.enabled": true,
     "azure-iot-edge.defaultPlatform": {
-        "platform": "arm32v7",
+        "platform": "amd64",
         "alias": null
     },
-    "python.pythonPath": "FlaskApp\\venv\\Scripts\\python.exe"
+    "python.pythonPath": "FlaskApp/venv/bin/python3"
 }
