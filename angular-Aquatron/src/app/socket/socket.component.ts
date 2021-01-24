@@ -13,21 +13,35 @@ export class SocketComponent implements OnInit {
   user: string;
   message: string;
   conversation = <any>[];
+  urlLocal = 'http://127.0.0.1:5000';
+  urlVm = 'http://192.168.179.121:5000';
+  urlCloud = 'https://pruetpiflask.azurewebsites.net';
+
+  url = this.urlVm;
 
 
   ngOnInit(): void {
     this.connect();
-    this.setReceiveMethod();
+    this.setReceiveDataMethod();
+    this.setReceiveLoginMethod();
+
   }
 
   connect(){
-    this.socketio = io('http://127.0.0.1:5000');
+    this.socketio = io(this.url);
   }
 
-  setReceiveMethod() {
+  setReceiveDataMethod() {
     this.socketio.on('my response', (data) => {
       this.conversation.push(data)
       console.log(this.conversation);
+    });
+  }
+
+  setReceiveLoginMethod() {
+    this.socketio.on('login response', (data) => {
+      // this.conversation.push(data)
+      console.log(data);
     });
   }
 

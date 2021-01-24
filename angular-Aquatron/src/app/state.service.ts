@@ -6,12 +6,15 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
   providedIn: 'root'
 })
 export class StateService {
+  urlLocal = 'http://localhost:5000';
+  urlVm = 'http://192.168.179.121:5000';
+  urlCloud = 'https://pruetpiflask.azurewebsites.net';
+
+
+  url = this.urlCloud
 
   getState(minutes) {
-    const URL = 'https://pruetpiflask.azurewebsites.net/state/get/'
-
-    // return this.http.get(URL + minutes.toString())
-    return this.http.get('http://localhost:5000/state/get/' + minutes.toString())
+    return this.http.get(this.url + '/state/get/' + minutes.toString())
   }
 
   constructor(private http: HttpClient) { }
