@@ -17,7 +17,7 @@ export class AuthService {
   urlVm = 'http://192.168.179.121:5000';
   urlCloud = 'https://pruetpiflask.azurewebsites.net';
 
-  url = this.urlVm
+  url = this.urlCloud
 
   // https://fireship.io/lessons/sharing-data-between-angular-components-four-methods/
   // Keeps "Log In" button updated with correct text to log in or log out
