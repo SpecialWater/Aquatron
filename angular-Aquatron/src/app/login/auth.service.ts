@@ -13,6 +13,12 @@ export class AuthService {
   constructor(private http: HttpClient) {
   }
 
+  urlLocal = 'http://localhost:5000';
+  urlVm = 'http://192.168.179.121:5000';
+  urlCloud = 'https://pruetpiflask.azurewebsites.net';
+
+  url = this.urlVm
+
   // https://fireship.io/lessons/sharing-data-between-angular-components-four-methods/
   // Keeps "Log In" button updated with correct text to log in or log out
   private loginSource = new BehaviorSubject(false);
@@ -21,7 +27,7 @@ export class AuthService {
   login(username:string, password:string ) {
     this.loginSource.next(false);
     // return this.http.post<any>('https://pruetpiflask.azurewebsites.net/login', {username, password})
-    return this.http.post<any>('http://localhost:5001/login', {username, password})
+    return this.http.post<any>(this.url + '/login', {username, password})
         .pipe(
           tap(data => this.setSession(data)),
           tap(() => this.loginSource.next(true)),
