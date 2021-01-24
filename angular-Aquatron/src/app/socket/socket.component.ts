@@ -17,7 +17,7 @@ export class SocketComponent implements OnInit {
   urlVm = 'http://192.168.179.121:5000';
   urlCloud = 'https://pruetpiflask.azurewebsites.net';
 
-  url = this.urlVm;
+  url = this.urlCloud;
 
 
   ngOnInit(): void {
