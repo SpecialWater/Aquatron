@@ -13,4 +13,4 @@ app.config['SECRET_KEY'] = 'secret!'
 
 socketio = SocketIO(app, cors_allowed_origins='*')
 
-from app import routes 
+from app import routes

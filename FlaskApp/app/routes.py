@@ -1,3 +1,5 @@
+# import eventlet
+# eventlet.monkey_patch()
 from app.config import Config
 from app import app, socketio
 from flask import Flask, jsonify, request
@@ -13,6 +15,7 @@ from flask_jwt_extended import (
     get_jwt_identity
 )
 import json
+
 
 jwt = JWTManager(app)
 AquaState = Client('State').container
@@ -174,21 +177,23 @@ def login():
     return jsonify(access_token=access_token), 200
 
 
-
 @socketio.on('connect')
 def test_connect():
     print('connected!')
     emit('login response', {'data': 'Connected'})
 
+
 @socketio.on('disconnect')
 def test_disconnect():
     print('Client disconnected')
+
 
 @socketio.on('my event')
 def test_message(message):
     data = {"user": "Flask", "message": "Flask says hello!"}
     print(data)
     emit('my response', data)
+
 
 @socketio.on('my broadcast event')
 def test_message(message):
