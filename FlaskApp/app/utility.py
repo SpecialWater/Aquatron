@@ -40,11 +40,10 @@ def check_times(state_time, minutes):
         return False
 
 
-def send_C2D_message():
+def send_C2D_message(data):
     conn_string = Config.IOTHUB_CONNECTION_STRING
     device_id = Config.IOTHUB_DEVICE_ID
     registry_manager = IoTHubRegistryManager(conn_string)
-    data = "New Settings Saved!"
 
     registry_manager.send_c2d_message(
         device_id,
