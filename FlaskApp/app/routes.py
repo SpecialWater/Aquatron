@@ -71,7 +71,7 @@ def postSettings():
     AquaSettings.create_item(settings)
     AquaMaster.upsert_item(master)
 
-    send_C2D_message()
+    send_C2D_message('UpdatedSettings')
 
     return request.json
 
@@ -200,3 +200,9 @@ def test_message(message):
     data = json.loads(message)
     print(data)
     emit('my response', data, broadcast=True)
+
+@socketio.on('aquarium state')
+def aquarium_state(message):
+    data = json.loads(message)
+    print(data)
+    emit('update aquarium state', data, broadcast=True)
