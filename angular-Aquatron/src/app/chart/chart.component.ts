@@ -26,7 +26,7 @@ export class ChartComponent implements OnInit, OnDestroy {
   urlVm = 'http://192.168.179.121:5000';
   urlCloud = 'https://pruetpiflask.azurewebsites.net';
 
-  url = this.urlVm;
+  url = this.urlCloud;
 
   minutes = 120
   Highcharts: typeof Highcharts = Highcharts; // required
