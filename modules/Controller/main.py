@@ -17,7 +17,8 @@ class Main:
     load_dotenv()
 
     def __init__(self):
-        self.URL = "http://192.168.179.121:5000"
+        # self.URL = "http://192.168.179.121:5000"
+        self.URL = "https://pruetpiflask.azurewebsites.net"
         self.sio = socketio.Client()
         self.sio.connect(self.URL)
         # self.URL = "https://pruetpiflask.azurewebsites.net"
@@ -222,10 +223,10 @@ class Main:
     # define behavior for halting the application
     def stdin_listener(self):
         while True:
-            selection = input("Press Q to quit\n")
-            if selection == "Q" or selection == "q":
-                print("Quitting...")
-                break
+            # selection = input("Press Q to quit\n")
+            # if selection == "Q" or selection == "q":
+            #     print("Quitting...")
+            #     break
 
             time.sleep(self.time_delay_loop)
 
