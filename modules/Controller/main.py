@@ -7,6 +7,7 @@ import json
 import os
 from azure.iot.device.aio import IoTHubDeviceClient
 import asyncio
+import socketio
 from datetime import datetime
 import pytz
 import time
@@ -16,8 +17,10 @@ class Main:
     load_dotenv()
 
     def __init__(self):
-        # self.URL = "http://192.168.179.227:5001"
-        self.URL = "https://pruetpiflask.azurewebsites.net"
+        self.URL = "http://192.168.179.121:5000"
+        self.sio = socketio.Client()
+        self.sio.connect(self.URL)
+        # self.URL = "https://pruetpiflask.azurewebsites.net"
         self.token = self.login()
         self.temp_sensor = Temperature()
         self.outlets = Power()
@@ -34,7 +37,6 @@ class Main:
             "Pump_Power": 3
         }
 
-        asyncio.run(self.main())
 
     async def main(self):
         await asyncio.gather(
@@ -52,6 +54,7 @@ class Main:
 
         # Finally, disconnect
         await self.device_client.disconnect()
+        
 
     def set_heater_outlet(self):
         if not self.settings["Heater"]["Enabled"]:
@@ -188,21 +191,36 @@ class Main:
         url = self.URL + "/state/post"
         payload = json.dumps(self.state)
 
-        settings = requests.post(
+        requests.post(
             url=url,
             data=payload,
             headers=headers
         )
 
+    def get_ID(self):
+        dt = datetime.now(pytz.timezone('Etc/UTC'))
+        id = f'{dt:%Y}-{dt:%m}-{dt:%d}T{dt:%H}:{dt:%M}:{dt:%S}.0000000Z'
+
+        return id
+
     # define behavior for halting the application
     def stdin_listener(self):
+        counter = 0
         while True:
             self.set_timed_outlets()
             self.set_heater_outlet()
-            self.post_state()
-            print(self.state, datetime.now())
-            time.sleep(60)
+            print(self.settings)
+            state = self.state
+            state['id'] = self.get_ID()
+            print(state)
+            self.sio.emit('aquarium state', json.dumps([state]))
+            time.sleep(1)
+
+            counter += 1
+            if counter == 60:
+                self.post_state()
+                counter = 0
 
 
 if __name__ == "__main__":
-    Main()
+    asyncio.run(Main().main())

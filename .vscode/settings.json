@@ -5,5 +5,5 @@
         "platform": "amd64",
         "alias": null
     },
-    "python.pythonPath": "FlaskApp/venv/bin/python3"
+    "python.pythonPath": "modules/Controller/venv/bin/python3"
 }
