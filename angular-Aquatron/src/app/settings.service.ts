@@ -10,7 +10,7 @@ export class SettingsService {
   urlVm = 'http://192.168.179.121:5000';
   urlCloud = 'https://pruetpiflask.azurewebsites.net';
 
-  url = this.urlCloud
+  url = this.urlVm
 
   getSettings() {
     //return this.http.get('https://pruetpiflask.azurewebsites.net/settings/get')

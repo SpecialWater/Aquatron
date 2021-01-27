@@ -11,7 +11,7 @@ export class StateService {
   urlCloud = 'https://pruetpiflask.azurewebsites.net';
 
 
-  url = this.urlCloud
+  url = this.urlVm
 
   getState(minutes) {
     return this.http.get(this.url + '/state/get/' + minutes.toString())
