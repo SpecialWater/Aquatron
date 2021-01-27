@@ -37,73 +37,118 @@ class Main:
             "Pump_Power": 3
         }
 
+        self.time_delay_loop = 5
+        self.time_delay_save = 60 * 5
 
     async def main(self):
-        await asyncio.gather(
-            self.iot_hub_login(),
-            self.get_settings()
+        try:
+            conn_str = os.getenv("IOT_CONN_STRING")
+            self.device_client = IoTHubDeviceClient. \
+                create_from_connection_string(conn_str)
+
+            await self.device_client.connect()
+
+            print("Connected to IoTHub")
+        except Exception as e:
+            print("Unexpected error %s " % e)
+            raise
+
+        self.get_settings()
+
+        self.looper = asyncio.gather(
+            self.set_timed_outlets(),
+            self.set_heater_outlet(),
+            self.emit_message(),
+            self.save_state()
         )
 
         # set the mesage received handler on the client
         self.device_client.on_message_received = self.message_received_handler
-        loop = asyncio.get_running_loop()
+        loop = asyncio.get_event_loop()
         user_finished = loop.run_in_executor(None, self.stdin_listener)
 
         # Wait for user to indicate they are done listening for messages
         await user_finished
+        self.looper.cancel()
 
         # Finally, disconnect
         await self.device_client.disconnect()
-        
 
-    def set_heater_outlet(self):
-        if not self.settings["Heater"]["Enabled"]:
-            self.outlets.power_off("Heater")
-            print("Heater is disabled")
-        else:
-            min_temp = self.settings["Heater"]["MinTemp"]
-            max_temp = self.settings["Heater"]["MaxTemp"]
-            current_temp = self.temp_sensor.getTemperature()
-            turn_on = True
+    async def emit_message(self):
+        while True:
+            state = self.state
+            state['id'] = self.get_ID()
+            print('Current state: ', state)
+            self.sio.emit('aquarium state', json.dumps([state]))
+            await asyncio.sleep(self.time_delay_loop)
 
-            if min_temp > current_temp:
-                turn_on = True
-            elif current_temp > max_temp:
-                turn_on = False
+    async def save_state(self):
+        while True:
+            self.post_state()
+            await asyncio.sleep(self.time_delay_save)
 
-            if turn_on:
-                self.outlets.power_on("Heater")
-            else:
+    async def set_heater_outlet(self):
+        while True:
+            if not self.settings["Heater"]["Enabled"]:
                 self.outlets.power_off("Heater")
-
-            print("Temp: {}, Heater On: {}".format(current_temp, turn_on))
-            self.state["Heater_On"] = turn_on
-            self.state["Temperature"] = current_temp
-
-    def set_timed_outlets(self):
-        current_time = datetime.now(self.tz)
-        timed_outlets = ["GasInjection", "Light_Refugium", "Light_UV"]
-
-        for outlet in timed_outlets:
-            if not self.settings[outlet]["Enabled"]:
-                self.outlets.power_off(outlet)
-                print("{} is disabled".format(outlet))
+                print("Heater is disabled")
             else:
-                time_on = self.settings[outlet]["TimeOn"]
-                timer = self.settings[outlet]["Timer"]
+                min_temp = self.settings["Heater"]["MinTemp"]
+                max_temp = self.settings["Heater"]["MaxTemp"]
+                current_temp = self.temp_sensor.getTemperature()
+                turn_on = True
 
-                turn_on = self.check_timer(current_time, time_on, timer)
+                if min_temp > current_temp:
+                    turn_on = True
+                elif current_temp > max_temp:
+                    turn_on = False
 
                 if turn_on:
-                    self.outlets.power_on(outlet)
+                    self.outlets.power_on("Heater")
                 else:
-                    self.outlets.power_off(outlet)
+                    self.outlets.power_off("Heater")
 
-                print("{} turned on: {}".format(outlet, turn_on))
-                self.state[outlet + "_On"] = turn_on
+                print("Temp: {}, Heater On: {}".format(current_temp, turn_on))
+                self.state["Heater_On"] = turn_on
+                self.state["Temperature"] = current_temp
+
+            await asyncio.sleep(self.time_delay_loop)
 
     # Check to see if outlet should be turned on or off
     # Applies to CO2, UV light and refugium light
+    async def set_timed_outlets(self):
+        while True:
+            current_time = datetime.now(self.tz)
+            timed_outlets = ["GasInjection", "Light_Refugium", "Light_UV"]
+
+            for outlet in timed_outlets:
+                if not self.settings[outlet]["Enabled"]:
+                    self.outlets.power_off(outlet)
+                    print("{} is disabled".format(outlet))
+                else:
+                    time_on = self.settings[outlet]["TimeOn"]
+                    timer = self.settings[outlet]["Timer"]
+
+                    turn_on = self.check_timer(current_time, time_on, timer)
+
+                    if turn_on:
+                        self.outlets.power_on(outlet)
+                    else:
+                        self.outlets.power_off(outlet)
+
+                    print("{} turned on: {}".format(outlet, turn_on))
+                    self.state[outlet + "_On"] = turn_on
+
+            await asyncio.sleep(self.time_delay_loop)
+
+    # define behavior for receiving a message
+    # Calls cosmos to get updated settings due to a saved change
+    async def message_received_handler(self, message):
+        print(message.data)
+
+        self.get_settings()
+        self.post_state()
+
     def check_timer(self, current_time, time_on, timer):
         h_now, m_now = [current_time.hour, current_time.minute]
         h_setting, m_setting = [int(t) for t in time_on.split(":")]
@@ -139,7 +184,7 @@ class Main:
 
         return token
 
-    async def get_settings(self):
+    def get_settings(self):
         headers = {"Authorization": "Bearer " + self.token["access_token"]}
 
         url = self.URL + "/settings/get"
@@ -150,37 +195,6 @@ class Main:
 
         self.settings = json.loads(settings.text)
         print("Settings retrieved successfully")
-
-        self.set_timed_outlets()
-        self.set_heater_outlet()
-
-    async def iot_hub_login(self):
-        try:
-            # The client object is used to interact with your Azure IoT hub.
-            # module_client = IoTHubModuleClient.create_from_edge_environment()
-            # IoTHubModuleClient.create_from_edge_environment()
-            conn_str = os.getenv("IOT_CONN_STRING")
-            self.device_client = IoTHubDeviceClient. \
-                create_from_connection_string(conn_str)
-
-            # connect the client.
-            await self.device_client.connect()
-            print("Connected to IoTHub")
-        except Exception as e:
-            print("Unexpected error %s " % e)
-            raise
-
-    # define behavior for receiving a message
-    # Calls cosmos to get updated settings due to a saved change
-    async def message_received_handler(self, message):
-        print("the data in the message received was ")
-        print(message.data)
-
-        await asyncio.gather(
-            self.get_settings()
-        )
-
-        self.post_state()
 
     def post_state(self):
         headers = {
@@ -197,6 +211,8 @@ class Main:
             headers=headers
         )
 
+        print('State posted')
+
     def get_ID(self):
         dt = datetime.now(pytz.timezone('Etc/UTC'))
         id = f'{dt:%Y}-{dt:%m}-{dt:%d}T{dt:%H}:{dt:%M}:{dt:%S}.0000000Z'
@@ -205,21 +221,13 @@ class Main:
 
     # define behavior for halting the application
     def stdin_listener(self):
-        counter = 0
         while True:
-            self.set_timed_outlets()
-            self.set_heater_outlet()
-            print(self.settings)
-            state = self.state
-            state['id'] = self.get_ID()
-            print(state)
-            self.sio.emit('aquarium state', json.dumps([state]))
-            time.sleep(1)
+            selection = input("Press Q to quit\n")
+            if selection == "Q" or selection == "q":
+                print("Quitting...")
+                break
 
-            counter += 1
-            if counter == 60:
-                self.post_state()
-                counter = 0
+            time.sleep(self.time_delay_loop)
 
 
 if __name__ == "__main__":
